@@ -1,0 +1,20 @@
+#
+# -*- coding: utf-8; tab-width: 4; c-basic-offset: 4; indent-tabs-mode: nil -*-
+
+git:
+  depth: 150
+
+branches:
+  except:
+    - *-dev
+
+language: bash
+
+before_script:
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq python
+  - sudo apt-get install -qq patchutils
+  - sudo apt-get install -qq realpath
+
+script:
+  - make ci-tests

@@ -1,0 +1,17 @@
+#
+# -*- coding: utf-8; tab-width: 4; c-basic-offset: 4; indent-tabs-mode: nil -*-
+
+general:
+  branches:
+    ignore:
+      - /.*-dev/
+
+test:
+  pre:
+    - sudo apt-get update -qq
+    - sudo apt-get install -qq python
+    - sudo apt-get install -qq patchutils
+    - sudo apt-get install -qq realpath
+
+  override:
+    - make ci-tests
