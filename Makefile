@@ -106,44 +106,6 @@ oe-qemuppc:
 oe-all: oe-qemux86 oe-qemux86-64 oe-qemumips oe-qemuarm oe-qemuarm64 oe-qemuppc
 
 # -----------------------------------------------------------------------------
-# Tizen build
-# -----------------------------------------------------------------------------
-
-.PHONY: tizen-qemux86
-tizen-qemux86:
-	$(ROOT_DIR)/oe-build-easy $(CONF_DIR)/tizen.conf qemux86 nodistro \
-        tizen-core-image-minimal-initramfs
-
-.PHONY: tizen-qemux86-64
-tizen-qemux86-64:
-	$(ROOT_DIR)/oe-build-easy $(CONF_DIR)/tizen.conf qemux86-64 nodistro \
-        tizen-core-image-minimal-initramfs
-
-.PHONY: tizen-qemuarm
-tizen-qemuarm:
-	$(ROOT_DIR)/oe-build-easy $(CONF_DIR)/tizen.conf qemuarm nodistro \
-        tizen-core-image-minimal-initramfs
-
-.PHONY: tizen-qemuarm64
-tizen-qemuarm64:
-	$(ROOT_DIR)/oe-build-easy $(CONF_DIR)/tizen.conf qemuarm64 nodistro \
-        tizen-core-image-minimal-initramfs
-
-.PHONY: tizen-qemumips
-tizen-qemumips:
-	$(ROOT_DIR)/oe-build-easy $(CONF_DIR)/tizen.conf qemumips nodistro \
-        tizen-core-image-minimal-initramfs
-
-.PHONY: tizen-qemuppc
-tizen-qemuppc:
-	$(ROOT_DIR)/oe-build-easy $(CONF_DIR)/tizen.conf qemuppc nodistro \
-        tizen-core-image-minimal-initramfs
-
-.PHONY: tizen-all
-tizen-all: tizen-qemux86 tizen-qemux86-64 tizen-qemuarm tizen-qemuarm64 \
-           tizen-qemumips tizen-qemuppc
-
-# -----------------------------------------------------------------------------
 # Poky build
 # -----------------------------------------------------------------------------
 
@@ -223,7 +185,7 @@ exiguous-all: exiguous-qemux86 exiguous-qemux86-64 exiguous-qemuarm \
 # all
 # -----------------------------------------------------------------------------
 .PHONY: all
-all: mrproper core-all oe-all tizen-all poky-all exiguous-all
+all: mrproper core-all oe-all poky-all exiguous-all
 
 # -----------------------------------------------------------------------------
 # tests
