@@ -35,17 +35,17 @@ Description
 
 A script to made easily an embedded Linux system with OpenEmbedded/Poky from scratch with a combo-layer configurations.
 
- - download combo-layer script
- - initialize repositories definied in the combo-layer configuration
- - source the build environment
- - edit local.conf to update the build configuration (distro...)
- - edit bblayers.conf to add additional layers
- - run bitbake to build the target image
+ - Download combo-layer script
+ - Initialize repositories are defined in the combo-layer configuration
+ - Source the build environment
+ - Edit local.conf to update the build configuration (distro...)
+ - Edit bblayers.conf to add additional layers
+ - Run bitbake to build the target image
 
-Usage examples
+Examples
 --------------
 
-To build a distroless image for qemux86 target:
+To build a distroless minimal image for qemux86 target:
 
 ::
 
@@ -65,7 +65,7 @@ To do
 Known Issues
 ------------
 
- - Can't build Tizen distribution, because oe-init-build-env renamed tizen-init-build-env
+ - Can't build Tizen distribution, because oe-init-build-env is renamed to tizen-init-build-env
 
 .. .. image:: ???
 ..     :alt: Bitdeli badge
