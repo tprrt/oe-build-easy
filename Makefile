@@ -193,4 +193,4 @@ all: mrproper core-all oe-all poky-all exiguous-all
 .PHONY: ci-tests
 ci-tests: mrproper
 	$(ROOT_DIR)/oe-build-easy $(CONF_DIR)/core.conf qemux86-64 nodistro \
-        core-image-minimal-initramfs --not-build
+        core-image-minimal-initramfs --parse-only
