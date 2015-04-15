@@ -116,15 +116,7 @@ for BBLAYER_NAME in $BBLAYERS_NAME; do
     fi
 done
 
-if [ "$OPTIONS" == "--parse-only" ]; then
-    # Used to run CI tests without to build the image, only parse recipes
-    bitbake --parse-only $IMAGE 
-else
-    # Build the image
-    bitbake $IMAGE
-fi
-
-
+bitbake $OPTIONS $IMAGE 
 
 # Return to the root folder
 cd $ROOT_DIR
