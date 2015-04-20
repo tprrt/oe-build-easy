@@ -1,64 +1,165 @@
 #!/usr/bin/env bash 
 # -*- coding: utf-8; tab-width: 4; c-basic-offset: 4; indent-tabs-mode: nil -*-
 
-# set -x
-set `process_arguments $@`
+# -----------------------------------------------------------------------------
+# Usage function 
+# -----------------------------------------------------------------------------
+function usage
+{
+    cat<<EOF
+Usage:
+  $1 [options] CONFIG_PATH
 
-CONF_PATH=`realpath $1`
-MACHINE=$2
-DISTRO=$3
-IMAGE=$4
-OPTIONS=$5
+Options:
+  -c, --compodir COMBO_PATH  Directory path of components
+  -C, --combodir COMPO_PATH  Directory path of combination
+  -i, --image IMAGE          Name of target image
+  -m, --machine MACHINE      Name of target machine
+  -d, --distro DISTRO        Name of distribution
+  -b, --build PATH           Directory path of build 
+  -o, --options OPTIONS      Additional BitBake's options
 
-# TODO command parameters
+  -D, --debug  Print debug message
+  -h, --help   Print usage message
+EOF
+}
+
+# -----------------------------------------------------------------------------
+# Main function
+# -----------------------------------------------------------------------------
+NAME=`basename $0`
+
+if [ $# -lt 1 ]; then
+    usage $NAME
+    exit 1
+fi
 
 NPROC=`nproc`
-# COMBO_URL=http://git.yoctoproject.org/cgit/cgit.cgi/poky/plain/scripts/combo-layer 
-COMBO_URL=http://cgit.openembedded.org/openembedded-core/plain/scripts/combo-layer
-
 ROOT_DIR=`pwd`
-REPOS_DIR=$ROOT_DIR/repos
-SRC_DIR=$ROOT_DIR/src
-SRC_SCRIPTS_DIR=$SRC_DIR/scripts
-SRC_CONF_DIR=$SRC_DIR/conf
+COMBO_URL=http://git.yoctoproject.org/cgit/cgit.cgi/poky/plain/scripts/combo-layer 
+
+# Init parameter and options to their default value
+DEBUG=0
+COMPO_DIR=$ROOT_DIR/components
+COMBO_DIR=$ROOT_DIR/combination
+IMAGE=core-image-minimal
+MACHINE=qemux86
+DISTRO=
+BUILD=$COMBO_DIR/build
+OPTIONS=
+
+CONFIG=
+
+# Parse parameter and options
+while [[ $# > 0 ]]; do
+    case $1 in
+        -D|--debug)
+            DEBUG=1
+            ;;
+        -h|--help)
+            usage $NAME;
+            exit 0
+            ;;
+        -c|--compodir)
+            shift
+            COMPO_DIR=`realpath $1`
+            ;;
+        -C|--combodir)
+            shift
+            COMBO_DIR=`realpath $1`
+            ;;
+        -i|--image)
+            shift
+            IMAGE=$1
+            ;;
+        -m|--machine)
+            shift
+            MACHINE=$1
+            ;;
+        -d|--distro)
+            shift
+            DISTRO=$1
+            ;;
+        -b|--build)
+            shift
+            BUILD=`realpath $1`
+            ;;
+        -o|--options)
+            shift
+            OPTIONS=$1
+            ;;
+        *)
+            if [ -z $CONFIG ]; then
+                CONFIG=`realpath $1`
+            else
+                usage $NAME;
+                exit 1
+            fi
+            ;;
+    esac
+    shift
+done
+
+if [ -z $CONFIG ]; then
+    usage $NAME ;
+    exit 1
+elif [ ! -f $CONFIG ]; then
+    echo "Configuration file doesn't exist: $CONFIG"
+    exit 1
+fi
+
+# Init vars
+SRC_SCRIPTS_DIR=$COMBO_DIR/scripts
+SRC_CONF_DIR=$COMBO_DIR/conf
 
 SRC_CONF_PATH=$SRC_CONF_DIR/combo-layer.conf
 SRC_COMBO_SCRIPT=$SRC_SCRIPTS_DIR/combo-layer
-SRC_BUILD_DIR=$SRC_DIR/build
+SRC_BUILD_DIR=$BUILD
 
 # Create the source folder
-if [ -d $SRC_DIR ]; then
-    rm -rf $SRC_DIR
+if [ -d $COMBO_DIR ]; then
+    echo "$COMBO_DIR already exist."
+else
+    mkdir -p $COMBO_DIR
+    mkdir -p $SRC_SCRIPTS_DIR
+    mkdir -p $SRC_CONF_DIR
 fi
-mkdir -p $SRC_DIR
-mkdir -p $SRC_SCRIPTS_DIR
-mkdir -p $SRC_CONF_DIR
 
 # Download combo-layer script from oe-core repository
-if [ ! -f $SRC_COMBO_SCRIPT ]; then
+if [ -f $SRC_COMBO_SCRIPT ]; then
+    echo "$SRC_COMBO_SCRIPT already exist."
+else
     wget $COMBO_URL -O $SRC_COMBO_SCRIPT
     chmod a+x $SRC_COMBO_SCRIPT
 fi
 
 # Create the configuration folder into the source folder
-if [ ! -d $SRC_CONF_DIR ]; then
+if [ -d $SRC_CONF_DIR ]; then
+    echo "$SRC_CONF_DIR already exist."
+else
     mkdir -p $SRC_CONF_DIR
 fi
 
 # Copy the combo layer configuration to the configuration folder
-if [ ! -f $SRC_CONF_PATH ]; then
-    cp $CONF_PATH $SRC_CONF_PATH
+if [ -f $SRC_CONF_PATH ]; then
+    echo "$SRC_CONF_PATH already exist."
+else
+    cp $CONFIG $SRC_CONF_PATH
 fi
 
 # Change current directory to the source folder to run combo-layer script
-cd $SRC_DIR
+cd $COMBO_DIR
 
 # Update environment to run combo-layer script
-export LOCAL_REPO_DIR=$REPOS_DIR
-export DEST_DIR=$SRC_DIR
+export LOCAL_REPO_DIR=$COMPO_DIR
+export DEST_DIR=$COMBO_DIR
 
 # Run combo-layer script to initialize repos
-$SRC_COMBO_SCRIPT init -D -c $SRC_CONF_PATH
+if [ $DEBUG -eq 0 ]; then
+    $SRC_COMBO_SCRIPT init -c $SRC_CONF_PATH
+else
+    $SRC_COMBO_SCRIPT init -D -c $SRC_CONF_PATH
+fi
 
 # # Read combo-layer configuration file to obtain the name of all layers used
 # LAYERS_NAME=""
@@ -76,17 +177,15 @@ $SRC_COMBO_SCRIPT init -D -c $SRC_CONF_PATH
 
 # List of all layers which contains a local.conf
 BBLAYERS_NAME=""
-TMP_LIST=`find $SRC_DIR -name "layer.conf"`
+TMP_LIST=`find $COMBO_DIR -name "layer.conf"`
 for TMP in $TMP_LIST; do
     case $TMP in
         *meta-skeleton*|*meta-selftest*)
             continue
             ;;
-        
         *meta-*)
             BBLAYERS_NAME="$BBLAYERS_NAME $(dirname $(dirname $TMP))"
             ;;
-
         *)
             continue
             ;;
@@ -94,7 +193,7 @@ for TMP in $TMP_LIST; do
 done
 
 # Init the build environment
-source $SRC_DIR/oe-init-build-env $SRC_BUILD_DIR
+source $COMBO_DIR/oe-init-build-env $SRC_BUILD_DIR
 
 # Edit the local.conf file of current build
 LOCAL_CONF_FILE=$SRC_BUILD_DIR/conf/local.conf
@@ -116,9 +215,14 @@ for BBLAYER_NAME in $BBLAYERS_NAME; do
     fi
 done
 
-bitbake $OPTIONS $IMAGE 
+if [ $DEBUG -eq 1 ] && [[ ! $OPTIONS =~ .*-DDD.* ]]; then
+    bitbake -DDD $OPTIONS $IMAGE 
+else
+    bitbake $OPTIONS $IMAGE
+fi
 
 # Return to the root folder
-cd $ROOT_DIR
+# cd $ROOT_DIR
 
 exit 0
+

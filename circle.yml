@@ -14,4 +14,4 @@ test:
     - sudo apt-get install -qq realpath
 
   override:
-    - make ci-tests
+    - make build OPTIONS="--parse-only"
