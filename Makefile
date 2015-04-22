@@ -43,7 +43,7 @@ $(info )
 $(info Current distribution: $(DISTRO))
 $(info Current target: $(TARGET))
 $(info Current image: $(IMAGE))
-$(info Default options: $(OPTIONS))
+$(info Current options: $(OPTIONS))
 $(info )
 
 # -----------------------------------------------------------------------------

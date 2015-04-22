@@ -33,14 +33,13 @@ oe-build-easy
 Description
 -----------
 
-A script to made easily an embedded Linux system with OpenEmbedded/Poky from scratch with a combo-layer configurations.
-
- - Download combo-layer script
- - Initialize repositories are defined in the combo-layer configuration
- - Source the build environment
- - Edit local.conf to update the build configuration (distro...)
- - Edit bblayers.conf to add additional layers
- - Run bitbake to build the target image
+A script to made easily an embedded Linux system with OpenEmbedded/Poky from scratch with a combo-layer configurations:
+- Download combo-layer script
+- Initialize repositories are defined in the combo-layer configuration
+- Source the build environment
+- Edit local.conf to update the build configuration (distro...)
+- Edit bblayers.conf to add additional layers
+- Run bitbake to build the target image
 
 Usage
 -----
@@ -96,7 +95,7 @@ To do
 Known Issues
 ------------
 
- - Can't build Tizen distribution, because oe-init-build-env is renamed to tizen-init-build-env
+- Can't build Tizen distribution, because oe-init-build-env is renamed to tizen-init-build-env
 
 .. .. image:: ???
 ..     :alt: Bitdeli badge
