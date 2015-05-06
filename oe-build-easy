@@ -36,7 +36,8 @@ fi
 
 NPROC=`nproc`
 ROOT_DIR=`pwd`
-COMBO_URL=http://git.yoctoproject.org/cgit/cgit.cgi/poky/plain/scripts/combo-layer 
+COMBO_URL=http://cgit.openembedded.org/openembedded-core/plain/scripts/combo-layer
+# COMBO_URL=http://git.yoctoproject.org/cgit/cgit.cgi/poky/plain/scripts/combo-layer
 
 # Init parameter and options to their default value
 DEBUG=0

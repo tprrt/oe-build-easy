@@ -53,15 +53,15 @@ $(info )
 clean:
 	$(info Clean the root folder...)
 	@find $(ROOT_DIR) -type f -name "*~" -delete
-	$(info Remove the combination...)
-	@rm -rf $(COMBO_DIR)
+	$(info Remove components...)
+	@rm -rf $(COMPO_DIR)
 
 .PHONY: mrproper
 mrproper: clean
 	$(info Remove combo-layer script...)
 	@rm -f $(SRC_COMBO_SCRIPT)
-	$(info Remove components...)
-	@rm -rf $(COMPO_DIR)
+	$(info Remove combination...)
+	@rm -rf $(COMBO_DIR)
 
 # -----------------------------------------------------------------------------
 # build
