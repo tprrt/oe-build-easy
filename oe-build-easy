@@ -198,14 +198,41 @@ source $COMBO_DIR/oe-init-build-env $SRC_BUILD_DIR
 
 # Edit the local.conf file of current build
 LOCAL_CONF_FILE=$SRC_BUILD_DIR/conf/local.conf
-sed -i "s/^DISTRO ?= .*$/DISTRO ?= \"$DISTRO\"/" \
-    $LOCAL_CONF_FILE
-sed -i "/^#MACHINE ?= \"$MACHINE\"/s/$/\\nMACHINE ?= \"$MACHINE\"/" \
-    $LOCAL_CONF_FILE
+
+grep -Fq "^DISTRO ?= \"$DISTRO\"" $LOCAL_CONF_FILE
+if [ $? -ne 0 ]; then
+    sed -i "s/^DISTRO ?= .*$/DISTRO ?= \"$DISTRO\"/" \
+        $LOCAL_CONF_FILE
+fi
+grep -Fq "DISTRO ?= \"$DISTRO\"" $LOCAL_CONF_FILE
+if [ $? -ne 0 ]; then
+    echo "DISTRO ?= \"$DISTRO\"" >> $LOCAL_CONF_FILE
+fi
+
+grep -Fq "^MACHINE ?= \"$MACHINE\"" $LOCAL_CONF_FILE
+if [ $? -ne 0 ]; then
+    sed -i "/^#MACHINE ?= \"$MACHINE\"/s/$/\\nMACHINE ?= \"$MACHINE\"/" \
+        $LOCAL_CONF_FILE
+fi
+grep -Fq "^MACHINE ?= \"$MACHINE\"" $LOCAL_CONF_FILE
+if [ $? -ne 0 ]; then
+    sed -i "s/^MACHINE ?= .*$/#MACHINE ?=  .*$/" \
+        $LOCAL_CONF_FILE
+    sed -i "/^MACHINE ??= .*$/s/$/\\nMACHINE ?= \"$MACHINE\"/" \
+        $LOCAL_CONF_FILE
+fi
+
+grep -Fq "^BB_NUMBER_THREADS\ =\ \"$NPROC\"" $LOCAL_CONF_FILE
+if [ $? -ne 0 ]; then
 sed -i "s/^#BB_NUMBER_THREADS.*$/BB_NUMBER_THREADS\ =\ \"$NPROC\"/" \
     $LOCAL_CONF_FILE
+fi
+
+grep -Fq "^PARALLEL_MAKE\ =\ \"-j$NPROC\"" $LOCAL_CONF_FILE
+if [ $? -ne 0 ]; then
 sed -i "s/^#PARALLEL_MAKE.*$/PARALLEL_MAKE\ =\ \"-j$NPROC\"/" \
     $LOCAL_CONF_FILE
+fi
 
 # Edit the bblayers.conf file of current build
 BBLAYERS_CONF_FILE=$SRC_BUILD_DIR/conf/bblayers.conf
