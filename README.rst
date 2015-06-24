@@ -34,6 +34,7 @@ Description
 -----------
 
 A script to made easily an embedded Linux system with OpenEmbedded/Poky from scratch with a combo-layer configurations:
+
 - Download combo-layer script
 - Initialize repositories are defined in the combo-layer configuration
 - Source the build environment
