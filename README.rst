@@ -57,7 +57,7 @@ Usage
       -i, --image IMAGE          Name of target image
       -m, --machine MACHINE      Name of target machine
       -d, --distro DISTRO        Name of distribution
-      -b, --build PATH           Directory path of build 
+      -b, --build PATH           Directory path of build
       -o, --options OPTIONS      Additional BitBake's options
 
       -D, --debug  Print debug message
@@ -87,7 +87,6 @@ To do
 -----
 
 - Add additional parameters and options
-- Add GPLv2 licence header
 - Add debug message
 - Finish to add the support of combo-layer update
 - Implement build-all and parse-all target in Makefile
