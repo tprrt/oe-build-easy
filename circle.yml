@@ -6,15 +6,30 @@ general:
     ignore:
       - /.*-dev/
 
-test:
-  pre:
+dependencies:
+  override:
+    # Install requirements
     - sudo apt-get update -qq
     - sudo apt-get install -qq python
     - sudo apt-get install -qq patchutils
     - sudo apt-get install -qq realpath
+    - sudo apt-get install -qq curl
+    - sudo apt-get install -qq git
 
+    # Configure git
+    - git config --global user.email "circleci@tupi.fr"
+    - git config --global user.name "circleci"
+    - git config --global color.ui false
+
+    # Install git-repo
+    # NB: PATH already includes /home/ubuntu/bin
+    - mkdir -p $HOME/bin
+    - curl https://storage.googleapis.com/git-repo-downloads/repo > $HOME/bin/repo
+    - chmod a+x $HOME/bin/repo
+
+test:
   override:
-    - make all OPTIONS="--parse-only"
+  - make all OPTIONS="--parse-only"
 
 # TODO If the build is well finished then update combination layer and publish
-# images built on $CIRCLE ARTIFACTS.
+# images built on $CIRCLE_ARTIFACTS.

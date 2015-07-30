@@ -1,6 +1,8 @@
 #
 # -*- coding: utf-8; tab-width: 4; c-basic-offset: 4; indent-tabs-mode: nil -*-
 
+sudo: false
+
 git:
   depth: 150
 
@@ -10,11 +12,29 @@ branches:
 
 language: bash
 
+# Install packages are required
+addons:
+  apt:
+    packages:
+    - python
+    - patchutils
+    - realpath
+    - curl
+    - git
+
 before_script:
-  - sudo apt-get update -qq
-  - sudo apt-get install -qq python
-  - sudo apt-get install -qq patchutils
-  - sudo apt-get install -qq realpath
+  # Configure git
+  - git config --global user.email "travis-ci@tupi.fr"
+  - git config --global user.name "travis-ci"
+  - git config --global color.ui true
+
+  # Install repo
+  - mkdir -p $HOME/bin
+  - curl https://storage.googleapis.com/git-repo-downloads/repo > $HOME/bin/repo
+  - chmod a+x $HOME/bin/repo
+
+env:
+  - PATH=$HOME/bin:$PATH
 
 script:
   - make all OPTIONS="--parse-only"
