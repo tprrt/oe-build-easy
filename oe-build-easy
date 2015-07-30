@@ -57,7 +57,7 @@ ROOT_DIR=`pwd`
 COMBO_URL=http://cgit.openembedded.org/openembedded-core/plain/scripts/combo-layer
 # COMBO_URL=http://git.yoctoproject.org/cgit/cgit.cgi/poky/plain/scripts/combo-layer
 
-# Init parameter and options to their default value
+# Initialize parameters and options to their default value
 DEBUG=0
 COMPO_DIR=$ROOT_DIR/components
 COMBO_DIR=$ROOT_DIR/combination
@@ -127,7 +127,7 @@ elif [ ! -f $CONFIG ]; then
     exit 1
 fi
 
-# Init vars
+# Initialize vars
 SRC_SCRIPTS_DIR=$COMBO_DIR/scripts
 SRC_CONF_DIR=$COMBO_DIR/conf
 
@@ -211,7 +211,7 @@ for TMP in $TMP_LIST; do
     esac
 done
 
-# Init the build environment
+# Initialize the build environment
 source $COMBO_DIR/oe-init-build-env $SRC_BUILD_DIR
 
 # Edit the local.conf file of current build

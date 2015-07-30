@@ -17,4 +17,4 @@ before_script:
   - sudo apt-get install -qq realpath
 
 script:
-  - make build OPTIONS="--parse-only"
+  - make all OPTIONS="--parse-only"

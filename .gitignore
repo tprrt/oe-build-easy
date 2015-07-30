@@ -1,6 +1,10 @@
 # emacs noise
 *~
 
+# git-repo noise
+.repo
+
 # oe-build-easy noise
 components
 combination
+build

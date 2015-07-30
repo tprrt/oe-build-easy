@@ -14,4 +14,7 @@ test:
     - sudo apt-get install -qq realpath
 
   override:
-    - make build OPTIONS="--parse-only"
+    - make all OPTIONS="--parse-only"
+
+# TODO If the build is well finished then update combination layer and publish
+# images built on $CIRCLE ARTIFACTS.
