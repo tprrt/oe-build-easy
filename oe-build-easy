@@ -34,7 +34,8 @@ Options:
   -i, --image IMAGE          Name of target image
   -m, --machine MACHINE      Name of target machine
   -d, --distro DISTRO        Name of distribution
-  -b, --build PATH           Directory path of build 
+  -b, --build PATH           Directory path of build
+  -H, --history PATH         Directory path of buildhistory
   -o, --options OPTIONS      Additional BitBake's options
 
   -D, --debug  Print debug message
@@ -65,6 +66,7 @@ IMAGE=core-image-minimal
 MACHINE=qemux86
 DISTRO=
 BUILD=$COMBO_DIR/build
+HISTORY=$BUILD/buildhistory
 OPTIONS=
 
 CONFIG=
@@ -102,6 +104,10 @@ while [[ $# > 0 ]]; do
         -b|--build)
             shift
             BUILD=`realpath $1`
+            ;;
+        -H|--history)
+            shift
+            HISTORY=`realpath $1`
             ;;
         -o|--options)
             shift
@@ -217,6 +223,7 @@ source $COMBO_DIR/oe-init-build-env $SRC_BUILD_DIR
 # Edit the local.conf file of current build
 LOCAL_CONF_FILE=$SRC_BUILD_DIR/conf/local.conf
 
+# Inform the DISTRO field
 grep -Fq "^DISTRO ?= \"$DISTRO\"" $LOCAL_CONF_FILE
 if [ $? -ne 0 ]; then
     sed -i "s/^DISTRO ?= .*$/DISTRO ?= \"$DISTRO\"/" \
@@ -227,6 +234,7 @@ if [ $? -ne 0 ]; then
     echo "DISTRO ?= \"$DISTRO\"" >> $LOCAL_CONF_FILE
 fi
 
+# Inform the MACHINE field
 grep -Fq "^MACHINE ?= \"$MACHINE\"" $LOCAL_CONF_FILE
 if [ $? -ne 0 ]; then
     sed -i "/^#MACHINE ?= \"$MACHINE\"/s/$/\\nMACHINE ?= \"$MACHINE\"/" \
@@ -240,16 +248,29 @@ if [ $? -ne 0 ]; then
         $LOCAL_CONF_FILE
 fi
 
+# Inform the BB_NUMBER_THREADS field
 grep -Fq "^BB_NUMBER_THREADS\ =\ \"$NPROC\"" $LOCAL_CONF_FILE
 if [ $? -ne 0 ]; then
 sed -i "s/^#BB_NUMBER_THREADS.*$/BB_NUMBER_THREADS\ =\ \"$NPROC\"/" \
     $LOCAL_CONF_FILE
 fi
 
+# Inform the PARALLEL_MAKE field
 grep -Fq "^PARALLEL_MAKE\ =\ \"-j$NPROC\"" $LOCAL_CONF_FILE
 if [ $? -ne 0 ]; then
 sed -i "s/^#PARALLEL_MAKE.*$/PARALLEL_MAKE\ =\ \"-j$NPROC\"/" \
     $LOCAL_CONF_FILE
+fi
+
+# Inform the BUILDHISTORY_DIR field
+grep -Fq "^BUILDHISTORY_DIR ?= \"$HISTORY_DIR\"" $LOCAL_CONF_FILE
+if [ $? -ne 0 ]; then
+    sed -i "s/^BUILDHISTORY_DIR ?= .*$/BUILDHISTORY_DIR ?= \"$HISTORY_DIR\"/" \
+        $LOCAL_CONF_FILE
+fi
+grep -Fq "BUILDHISTORY_DIR ?= \"$HISTORY_DIR\"" $LOCAL_CONF_FILE
+if [ $? -ne 0 ]; then
+    echo "BUILDHISTORY_DIR ?= \"$HISTORY_DIR\"" >> $LOCAL_CONF_FILE
 fi
 
 # Edit the bblayers.conf file of current build

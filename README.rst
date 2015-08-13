@@ -58,6 +58,7 @@ Usage
       -m, --machine MACHINE      Name of target machine
       -d, --distro DISTRO        Name of distribution
       -b, --build PATH           Directory path of build
+      -H, --history PATH         Directory path of buildhistory
       -o, --options OPTIONS      Additional BitBake's options
 
       -D, --debug  Print debug message

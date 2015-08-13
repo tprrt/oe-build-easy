@@ -25,6 +25,9 @@ COMPO_DIR ?= ${DEFAULT_COMPO_DIR}
 COMBO_DIR ?= ${DEFAULT_COMBO_DIR}
 BUILD_DIR ?= ${DEFAULT_BUILD_DIR}
 
+DEFAULT_HISTORY_DIR := ${BUILD_DIR}/build
+HISTORY_DIR ?= ${DEFAULT_HISTORY_DIR}/buildhistory
+
 OE_BUILD_EASY_SCRIPT := ${COMPO_DIR}/meta-exiguous/scripts/oe-build-easy
 DEFAULT_CONF_PATH := ${COMPO_DIR}/meta-exiguous/conf/combo-layer.conf
 CONF_PATH ?= ${DEFAULT_CONF_PATH}
@@ -56,6 +59,7 @@ config:
         $(info Components: ${COMPO_DIR})
         $(info Combination: ${COMBO_DIR})
         $(info Build: ${BUILD_DIR})
+        $(info Buildhistory: ${HISTORY_DIR})
         $(info )
         $(info Combo configuration: ${CONF_PATH})
         $(info )
@@ -120,6 +124,7 @@ ${BUILD_DIR}: ${COMPO_DIR} ${COMBO_DIR}
                 --machine ${TARGET} \
                 --distro ${DISTRO} \
                 --build $@ \
+                --history ${HISTORY_DIR} \
                 --options ${OPTIONS}
 
 .PHONY: build
