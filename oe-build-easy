@@ -19,6 +19,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 
+# set -x
+
 # -----------------------------------------------------------------------------
 # Usage function 
 # -----------------------------------------------------------------------------
@@ -36,6 +38,7 @@ Options:
   -d, --distro DISTRO        Name of distribution
   -b, --build PATH           Directory path of build
   -H, --history PATH         Directory path of buildhistory
+  -p, --packages CLASSES     List of packaging formats to enable
   -o, --options OPTIONS      Additional BitBake's options
 
   -D, --debug  Print debug message
@@ -67,6 +70,7 @@ MACHINE=qemux86
 DISTRO=
 BUILD=$COMBO_DIR/build
 HISTORY=$BUILD/buildhistory
+PACKAGES="package_rpm"
 OPTIONS=
 
 CONFIG=
@@ -108,6 +112,10 @@ while [[ $# > 0 ]]; do
         -H|--history)
             shift
             HISTORY=`realpath $1`
+            ;;
+        -p|--packages)
+            shift
+            PACKAGES=`realpath $1`
             ;;
         -o|--options)
             shift
@@ -224,53 +232,50 @@ source $COMBO_DIR/oe-init-build-env $SRC_BUILD_DIR
 LOCAL_CONF_FILE=$SRC_BUILD_DIR/conf/local.conf
 
 # Inform the DISTRO field
-grep -Fq "^DISTRO ?= \"$DISTRO\"" $LOCAL_CONF_FILE
-if [ $? -ne 0 ]; then
-    sed -i "s/^DISTRO ?= .*$/DISTRO ?= \"$DISTRO\"/" \
-        $LOCAL_CONF_FILE
-fi
+sed -i "s/^DISTRO ?= .*$/DISTRO ?= \"$DISTRO\"/" \
+    $LOCAL_CONF_FILE
+
 grep -Fq "DISTRO ?= \"$DISTRO\"" $LOCAL_CONF_FILE
 if [ $? -ne 0 ]; then
     echo "DISTRO ?= \"$DISTRO\"" >> $LOCAL_CONF_FILE
 fi
 
 # Inform the MACHINE field
-grep -Fq "^MACHINE ?= \"$MACHINE\"" $LOCAL_CONF_FILE
+sed -i "s/^#MACHINE ?= \"$MACHINE\".*$/MACHINE ?= \"$MACHINE\"/" \
+    $LOCAL_CONF_FILE
+grep -Fq "MACHINE ?= \"$MACHINE\"" $LOCAL_CONF_FILE
 if [ $? -ne 0 ]; then
-    sed -i "/^#MACHINE ?= \"$MACHINE\"/s/$/\\nMACHINE ?= \"$MACHINE\"/" \
-        $LOCAL_CONF_FILE
-fi
-grep -Fq "^MACHINE ?= \"$MACHINE\"" $LOCAL_CONF_FILE
-if [ $? -ne 0 ]; then
-    sed -i "s/^MACHINE ?= .*$/#MACHINE ?=  .*$/" \
-        $LOCAL_CONF_FILE
     sed -i "/^MACHINE ??= .*$/s/$/\\nMACHINE ?= \"$MACHINE\"/" \
         $LOCAL_CONF_FILE
 fi
+grep -Fq "MACHINE ?= \"$MACHINE\"" $LOCAL_CONF_FILE
+if [ $? -ne 0 ]; then
+    echo "MACHINE ?= \"$MACHINE\"" >> $LOCAL_CONF_FILE
+fi
 
 # Inform the BB_NUMBER_THREADS field
-grep -Fq "^BB_NUMBER_THREADS\ =\ \"$NPROC\"" $LOCAL_CONF_FILE
-if [ $? -ne 0 ]; then
 sed -i "s/^#BB_NUMBER_THREADS.*$/BB_NUMBER_THREADS\ =\ \"$NPROC\"/" \
     $LOCAL_CONF_FILE
-fi
 
 # Inform the PARALLEL_MAKE field
-grep -Fq "^PARALLEL_MAKE\ =\ \"-j$NPROC\"" $LOCAL_CONF_FILE
-if [ $? -ne 0 ]; then
 sed -i "s/^#PARALLEL_MAKE.*$/PARALLEL_MAKE\ =\ \"-j$NPROC\"/" \
     $LOCAL_CONF_FILE
-fi
 
 # Inform the BUILDHISTORY_DIR field
-grep -Fq "^BUILDHISTORY_DIR ?= \"$HISTORY_DIR\"" $LOCAL_CONF_FILE
+
+
+grep -Fq "BUILDHISTORY_DIR ?= \"$HISTORY\"" $LOCAL_CONF_FILE
 if [ $? -ne 0 ]; then
-    sed -i "s/^BUILDHISTORY_DIR ?= .*$/BUILDHISTORY_DIR ?= \"$HISTORY_DIR\"/" \
-        $LOCAL_CONF_FILE
+    echo "BUILDHISTORY_DIR ?= \"$HISTORY\"" >> $LOCAL_CONF_FILE
 fi
-grep -Fq "BUILDHISTORY_DIR ?= \"$HISTORY_DIR\"" $LOCAL_CONF_FILE
+
+# Inform the PACKAGE_CLASSES field
+sed -i "s/^PACKAGE_CLASSES ?= .*$/PACKAGE_CLASSES ?= \"$PACKAGES\"/" \
+    $LOCAL_CONF_FILE
+
+grep -Fq "PACKAGE_CLASSES ?= \"$PACKAGES\"" $LOCAL_CONF_FILE
 if [ $? -ne 0 ]; then
-    echo "BUILDHISTORY_DIR ?= \"$HISTORY_DIR\"" >> $LOCAL_CONF_FILE
+    echo "PACKAGE_CLASSES ?= \"$PACKAGES\"" >> $LOCAL_CONF_FILE
 fi
 
 # Edit the bblayers.conf file of current build

@@ -59,6 +59,7 @@ Usage
       -d, --distro DISTRO        Name of distribution
       -b, --build PATH           Directory path of build
       -H, --history PATH         Directory path of buildhistory
+      -p, --packages CLASSES     List of packaging formats to enable
       -o, --options OPTIONS      Additional BitBake's options
 
       -D, --debug  Print debug message

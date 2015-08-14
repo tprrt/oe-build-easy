@@ -25,8 +25,8 @@ COMPO_DIR ?= ${DEFAULT_COMPO_DIR}
 COMBO_DIR ?= ${DEFAULT_COMBO_DIR}
 BUILD_DIR ?= ${DEFAULT_BUILD_DIR}
 
-DEFAULT_HISTORY_DIR := ${BUILD_DIR}/build
-HISTORY_DIR ?= ${DEFAULT_HISTORY_DIR}/buildhistory
+DEFAULT_HISTORY_DIR := ${BUILD_DIR}/buildhistory
+HISTORY_DIR ?= ${DEFAULT_HISTORY_DIR}
 
 OE_BUILD_EASY_SCRIPT := ${COMPO_DIR}/meta-exiguous/scripts/oe-build-easy
 DEFAULT_CONF_PATH := ${COMPO_DIR}/meta-exiguous/conf/combo-layer.conf
