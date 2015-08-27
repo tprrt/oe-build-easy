@@ -15,6 +15,9 @@ dependencies:
     - sudo apt-get install -qq realpath
     - sudo apt-get install -qq curl
     - sudo apt-get install -qq git
+    - sudo apt-get install -qq diffstat
+    - sudo apt-get install -qq chrpath
+    - sudo apt-get install -qq xterm
 
     # Configure git
     - git config --global user.email "circleci@tupi.fr"
@@ -29,7 +32,7 @@ dependencies:
 
 test:
   override:
-  - make all OPTIONS="--parse-only"
+  - make all OPTIONS="--parse-only" OE_BUILD_EASY_SCRIPT="${HOME}/${CIRCLE_PROJECT_REPONAME}/oe-build-easy"
 
-# TODO If the build is well finished then update combination layer and publish
+# FIXME [script] If the build is well finished then update combination layer and publish
 # images built on $CIRCLE_ARTIFACTS.

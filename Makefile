@@ -13,7 +13,7 @@ ROOT_DIR := $(shell pwd)
 
 DEFAULT_MANIFEST_URL := $(shell echo "git@github.com:tprrt/manifest.git")
 DEFAULT_MANIFEST_BRANCH := master
-DEFAULT_MANIFEST := master.xml
+DEFAULT_MANIFEST := default.xml
 MANIFEST_URL ?= ${DEFAULT_MANIFEST_URL}
 MANIFEST_BRANCH ?= ${DEFAULT_MANIFEST_BRANCH}
 MANIFEST ?= ${DEFAULT_MANIFEST}
@@ -95,15 +95,15 @@ mrproper: clean
 .PHONY: check
 check:
 	$(info Check if all tools need to build are available...)
-        $(foreach TOOL, ${TOOLS_NEEDED}, $(shell which ${TOOL} >/dev/null || \
-                echo "${TOOL} is not available" >&2; exit 1))
+	$(foreach TOOL, ${TOOLS_NEEDED}, $(shell which ${TOOL} >/dev/null \
+                || (echo "${TOOL} is not available" >&2; exit 1)))
 
 # -----------------------------------------------------------------------------
 # Initialize the environment
 # -----------------------------------------------------------------------------
 
 ${COMPO_DIR} ${COMBO_DIR}:
-	repo init -u ${MANIFEST_URL} -b ${MANIFEST_BRANCH} -m ${MANIFEST} && repo sync -c -j${NPROC}
+	repo init -u ${MANIFEST_URL} -b ${MANIFEST_BRANCH} -m ${MANIFEST}
 	repo sync -c -j${NPROC}
 	repo start ${MANIFEST_BRANCH} --all
 
@@ -130,31 +130,31 @@ ${BUILD_DIR}: ${COMPO_DIR} ${COMBO_DIR}
 .PHONY: build
 build: ${BUILD_DIR}
 
-# TODO build all available target
+# FIXME [script] Add a target to build all available target
 
 # -----------------------------------------------------------------------------
 # oe-selftest
 # -----------------------------------------------------------------------------
 
-# TODO
+# TODO [script] Add a target to run oe-selftest
 
 # -----------------------------------------------------------------------------
 # Update combination layer
 # -----------------------------------------------------------------------------
 
-# TODO
+# TODO [script] Add a target to update combination layer
 
 # -----------------------------------------------------------------------------
 # Publish images built
 # -----------------------------------------------------------------------------
 
-# TODO
+# TODO [script] Add a target to publish images built
 
 # -----------------------------------------------------------------------------
 # Build world
 # -----------------------------------------------------------------------------
 
-# TODO
+# TODO [script] Add a target to build world
 
 # -----------------------------------------------------------------------------
 # all

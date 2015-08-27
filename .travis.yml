@@ -12,8 +12,14 @@ branches:
 
 language: bash
 
-# Install packages are required
+
 addons:
+  # Allow SSH Known Hosts
+  ssh_known_hosts:
+    - gerrit.googlesource.com
+    - github.com
+
+  # Install packages are required
   apt:
     packages:
     - python
@@ -21,12 +27,15 @@ addons:
     - realpath
     - curl
     - git
+    - diffstat
+    - chrpath
+    - xterm
 
 before_script:
   # Configure git
   - git config --global user.email "travis-ci@tupi.fr"
   - git config --global user.name "travis-ci"
-  - git config --global color.ui true
+  - git config --global color.ui false
 
   # Install repo
   - mkdir -p $HOME/bin
@@ -37,4 +46,4 @@ env:
   - PATH=$HOME/bin:$PATH
 
 script:
-  - make all OPTIONS="--parse-only"
+  - make all OPTIONS="--parse-only" OE_BUILD_EASY_SCRIPT="$(pwd)/$REPO/oe-build-easy"
