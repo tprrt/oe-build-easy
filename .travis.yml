@@ -46,4 +46,4 @@ env:
   - PATH=$HOME/bin:$PATH
 
 script:
-  - make all OPTIONS="--parse-only" OE_BUILD_EASY_SCRIPT="$(pwd)/$REPO/oe-build-easy"
+  - make all OPTIONS="--parse-only"

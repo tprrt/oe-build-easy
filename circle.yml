@@ -32,7 +32,7 @@ dependencies:
 
 test:
   override:
-  - make all OPTIONS="--parse-only" OE_BUILD_EASY_SCRIPT="${HOME}/${CIRCLE_PROJECT_REPONAME}/oe-build-easy"
+  - make all OPTIONS="--parse-only"
 
 # FIXME [script] If the build is well finished then update combination layer and publish
 # images built on $CIRCLE_ARTIFACTS.

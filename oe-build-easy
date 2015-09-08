@@ -19,8 +19,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 
-# set -x
-
 # -----------------------------------------------------------------------------
 # Usage function 
 # -----------------------------------------------------------------------------
@@ -49,15 +47,15 @@ EOF
 # -----------------------------------------------------------------------------
 # Main function
 # -----------------------------------------------------------------------------
-NAME=`basename $0`
+NAME=$(basename $0)
 
 if [ $# -lt 1 ]; then
     usage $NAME
     exit 1
 fi
 
-NPROC=`nproc`
-ROOT_DIR=`pwd`
+NPROC=$(nproc)
+ROOT_DIR=$(pwd)
 COMBO_URL=http://cgit.openembedded.org/openembedded-core/plain/scripts/combo-layer
 # COMBO_URL=http://git.yoctoproject.org/cgit/cgit.cgi/poky/plain/scripts/combo-layer
 
@@ -80,6 +78,7 @@ while [[ $# > 0 ]]; do
     case $1 in
         -D|--debug)
             DEBUG=1
+            set -x
             ;;
         -h|--help)
             usage $NAME;
@@ -107,15 +106,15 @@ while [[ $# > 0 ]]; do
             ;;
         -b|--build)
             shift
-            BUILD=`realpath $1`
+            BUILD=$(realpath -m $1)
             ;;
         -H|--history)
             shift
-            HISTORY=`realpath $1`
+            HISTORY=$(realpath -m $1)
             ;;
         -p|--packages)
             shift
-            PACKAGES=`realpath $1`
+            PACKAGES=$1
             ;;
         -o|--options)
             shift
@@ -123,7 +122,7 @@ while [[ $# > 0 ]]; do
             ;;
         *)
             if [ -z $CONFIG ]; then
-                CONFIG=`realpath $1`
+                CONFIG=$(realpath $1)
             else
                 usage $NAME;
                 exit 1
@@ -281,7 +280,7 @@ fi
 # Edit the bblayers.conf file of current build
 BBLAYERS_CONF_FILE=$SRC_BUILD_DIR/conf/bblayers.conf
 for BBLAYER_NAME in $BBLAYERS_NAME; do
-    grep -Fq "$BBLAYER_NAME" $BBLAYERS_CONF_FILE
+    grep -Fq "$BBLAYER_NAME[^/]" $BBLAYERS_CONF_FILE
     if [ $? -ne 0 ]; then
         echo "BBLAYERS += \"$BBLAYER_NAME\"" >> $BBLAYERS_CONF_FILE
     fi

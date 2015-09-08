@@ -5,15 +5,16 @@
 .DEFAULT_GOAL := all
 
 NPROC := $(shell nproc)
+# DATETIME ?= $(shell date +%Y-%m-%d:%H:%M:%S)
 
 TOOLS_NEEDED := repo git gawk wget diffstat unzip chrpath xterm \
                 python realpath patch
 
 ROOT_DIR := $(shell pwd)
 
-DEFAULT_MANIFEST_URL := $(shell echo "git@github.com:tprrt/manifest.git")
+DEFAULT_MANIFEST_URL := $(shell echo "git@github.com:tprrt/exiguous-manifest.git")
 DEFAULT_MANIFEST_BRANCH := master
-DEFAULT_MANIFEST := default.xml
+DEFAULT_MANIFEST := master.xml
 MANIFEST_URL ?= ${DEFAULT_MANIFEST_URL}
 MANIFEST_BRANCH ?= ${DEFAULT_MANIFEST_BRANCH}
 MANIFEST ?= ${DEFAULT_MANIFEST}
@@ -29,9 +30,12 @@ DEFAULT_HISTORY_DIR := ${BUILD_DIR}/buildhistory
 HISTORY_DIR ?= ${DEFAULT_HISTORY_DIR}
 
 OE_BUILD_EASY_SCRIPT := ${COMPO_DIR}/meta-exiguous/scripts/oe-build-easy
-DEFAULT_CONF_PATH := ${COMPO_DIR}/meta-exiguous/conf/combo-layer.conf
+DEFAULT_CONF_PATH := ${COMPO_DIR}/meta-exiguous/conf/$(basename ${MANIFEST}).conf
 CONF_PATH ?= ${DEFAULT_CONF_PATH}
 
+# FIXME Add all machines of tupi, ergo and heart layers
+# FIXME Enable SAMA5D3 Xplained  to AVAILABLE_TARGETS
+# FIXME Enable SABRE Lite Design to AVAILABLE_TARGETS
 AVAILABLE_TARGETS := qemux86-64 x86_64 raspberrypi raspberrypi2 beaglebone
 AVAILABLE_DISTROS := nodistro poky oe exiguous
 AVAILABLE_IMAGES := core-image-minimal
@@ -104,28 +108,29 @@ check:
 
 ${COMPO_DIR} ${COMBO_DIR}:
 	repo init -u ${MANIFEST_URL} -b ${MANIFEST_BRANCH} -m ${MANIFEST}
-	repo sync -c -j${NPROC}
-	repo start ${MANIFEST_BRANCH} --all
+	repo sync -j${NPROC}
+	repo start $(basename ${MANIFEST}) --all || repo checkout $(basename ${MANIFEST})
 
 .PHONY: init
 init: ${COMPO_DIR} ${COMBO_DIR}
         $(info Initialize environment to build...)
 
 # -----------------------------------------------------------------------------
-# build
+# Build
 # -----------------------------------------------------------------------------
 
 .PHONY: ${BUILD_DIR}
 ${BUILD_DIR}: ${COMPO_DIR} ${COMBO_DIR}
 	${OE_BUILD_EASY_SCRIPT} ${CONF_PATH} \
-                --compodir ${COMPO_DIR} \
-                --combodir ${COMBO_DIR} \
-                --image ${IMAGE} \
-                --machine ${TARGET} \
-                --distro ${DISTRO} \
-                --build $@ \
-                --history ${HISTORY_DIR} \
-                --options ${OPTIONS}
+		--compodir ${COMPO_DIR} \
+		--combodir ${COMBO_DIR} \
+		--image ${IMAGE} \
+		--machine ${TARGET} \
+		--distro ${DISTRO} \
+		--build $@ \
+		--history ${HISTORY_DIR} \
+		--options ${OPTIONS} \
+		--debug
 
 .PHONY: build
 build: ${BUILD_DIR}
@@ -136,25 +141,25 @@ build: ${BUILD_DIR}
 # oe-selftest
 # -----------------------------------------------------------------------------
 
-# TODO [script] Add a target to run oe-selftest
+# FIXME [script] Add a target to run oe-selftest
 
 # -----------------------------------------------------------------------------
 # Update combination layer
 # -----------------------------------------------------------------------------
 
-# TODO [script] Add a target to update combination layer
+# FIXME [script] Add a target to update combination layer
 
 # -----------------------------------------------------------------------------
 # Publish images built
 # -----------------------------------------------------------------------------
 
-# TODO [script] Add a target to publish images built
+# FIXME [script] Add a target to publish images built
 
 # -----------------------------------------------------------------------------
 # Build world
 # -----------------------------------------------------------------------------
 
-# TODO [script] Add a target to build world
+# FIXME [script] Add a target to build world
 
 # -----------------------------------------------------------------------------
 # all
