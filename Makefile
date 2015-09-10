@@ -33,21 +33,20 @@ OE_BUILD_EASY_SCRIPT := ${COMPO_DIR}/meta-exiguous/scripts/oe-build-easy
 DEFAULT_CONF_PATH := ${COMPO_DIR}/meta-exiguous/conf/$(basename ${MANIFEST}).conf
 CONF_PATH ?= ${DEFAULT_CONF_PATH}
 
-# FIXME Add all machines of tupi, ergo and heart layers
-# FIXME Enable SAMA5D3 Xplained  to AVAILABLE_TARGETS
-# FIXME Enable SABRE Lite Design to AVAILABLE_TARGETS
-AVAILABLE_TARGETS := qemux86-64 x86_64 raspberrypi raspberrypi2 beaglebone
-AVAILABLE_DISTROS := nodistro poky oe exiguous
-AVAILABLE_IMAGES := core-image-minimal
+ifneq ("$(wildcard ${COMBO_DIR})","")
+AVAILABLE_MACHINES := $(shell find ${COMBO_DIR} -regex ".*/meta.*/conf/machine/[^/]*.conf")
+AVAILABLE_DISTROS := $(shell find ${COMBO_DIR} -regex ".*/meta.*/conf/distro/[^/]*.conf" )
+AVAILABLE_IMAGES := $(shell find ${COMBO_DIR} -regex ".*/meta.*/recipes-.*/images/[^/].*.bb")
+endif
 
 DEFAULT_OPTIONS :=
 DEFAULT_DISTRO := exiguous
-DEFAULT_TARGET := qemux86-64
+DEFAULT_MACHINE := qemux86-64
 DEFAULT_IMAGE := core-image-minimal
 
 OPTIONS ?= ${DEFAULT_OPTIONS}
 DISTRO ?= ${DEFAULT_DISTRO}
-TARGET ?= ${DEFAULT_TARGET}
+MACHINE ?= ${DEFAULT_MACHINE}
 IMAGE ?= ${DEFAULT_IMAGE}
 
 # -----------------------------------------------------------------------------
@@ -68,7 +67,7 @@ config:
         $(info Combo configuration: ${CONF_PATH})
         $(info )
         $(info Distribution: ${DISTRO})
-        $(info Target: ${TARGET})
+        $(info Machine: ${MACHINE})
         $(info Image: ${IMAGE})
         $(info Options: ${OPTIONS})
         $(info )
@@ -125,12 +124,11 @@ ${BUILD_DIR}: ${COMPO_DIR} ${COMBO_DIR}
 		--compodir ${COMPO_DIR} \
 		--combodir ${COMBO_DIR} \
 		--image ${IMAGE} \
-		--machine ${TARGET} \
+		--machine ${MACHINE} \
 		--distro ${DISTRO} \
 		--build $@ \
 		--history ${HISTORY_DIR} \
-		--options ${OPTIONS} \
-		--debug
+		--options ${OPTIONS}
 
 .PHONY: build
 build: ${BUILD_DIR}
