@@ -1,4 +1,4 @@
-#!/usr/bin/env bash 
+#!/usr/bin/env sh
 # -*- coding: utf-8; tab-width: 4; c-basic-offset: 4; indent-tabs-mode: nil -*-
 
 # A script to made easily an embedded Linux system with OpenEmbedded/Poky from
@@ -212,7 +212,7 @@ BBLAYERS_NAME=""
 TMP_LIST=`find $COMBO_DIR -name "layer.conf"`
 for TMP in $TMP_LIST; do
     case $TMP in
-        *meta-skeleton*|*meta-selftest*)
+        *meta-skeleton*|*meta-selftest*|*meta-tlk*)
             continue
             ;;
         *meta-*)

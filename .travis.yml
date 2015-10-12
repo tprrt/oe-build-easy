@@ -12,7 +12,6 @@ branches:
 
 language: bash
 
-
 addons:
   # Allow SSH Known Hosts
   ssh_known_hosts:

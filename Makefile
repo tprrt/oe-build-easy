@@ -42,7 +42,7 @@ endif
 DEFAULT_OPTIONS :=
 DEFAULT_DISTRO := exiguous
 DEFAULT_MACHINE := qemux86-64
-DEFAULT_IMAGE := core-image-minimal
+DEFAULT_IMAGE := exiguous-image-core
 
 OPTIONS ?= ${DEFAULT_OPTIONS}
 DISTRO ?= ${DEFAULT_DISTRO}
@@ -133,7 +133,7 @@ ${BUILD_DIR}: ${COMPO_DIR} ${COMBO_DIR}
 .PHONY: build
 build: ${BUILD_DIR}
 
-# FIXME [script] Add a target to build all available target
+# FIXME [script] Add a target to build all available machines
 
 # -----------------------------------------------------------------------------
 # oe-selftest
