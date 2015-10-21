@@ -42,7 +42,7 @@ endif
 DEFAULT_OPTIONS :=
 DEFAULT_DISTRO := exiguous
 DEFAULT_MACHINE := qemux86-64
-DEFAULT_IMAGE := exiguous-image-core
+DEFAULT_IMAGE := exiguous-image
 
 OPTIONS ?= ${DEFAULT_OPTIONS}
 DISTRO ?= ${DEFAULT_DISTRO}
