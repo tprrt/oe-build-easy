@@ -5,7 +5,7 @@
 .DEFAULT_GOAL := all
 
 NPROC := $(shell nproc)
-# DATETIME ?= $(shell date +%Y-%m-%d:%H:%M:%S)
+DATETIME ?= $(shell date +%Y-%m-%d:%H:%M:%S)
 
 TOOLS_NEEDED := repo git gawk wget diffstat unzip chrpath xterm \
                 python realpath patch
@@ -20,10 +20,20 @@ MANIFEST_BRANCH ?= ${DEFAULT_MANIFEST_BRANCH}
 MANIFEST ?= ${DEFAULT_MANIFEST}
 
 DEFAULT_COMPO_DIR := ${ROOT_DIR}/components
-DEFAULT_COMBO_DIR := ${ROOT_DIR}/combination
-DEFAULT_BUILD_DIR := ${ROOT_DIR}/build
 COMPO_DIR ?= ${DEFAULT_COMPO_DIR}
+export LOCAL_REPO_DIR=${COMPO_DIR}
+
+DEFAULT_COMBO_DIR := ${ROOT_DIR}/combination
 COMBO_DIR ?= ${DEFAULT_COMBO_DIR}
+COMBO_URL=http://cgit.openembedded.org/openembedded-core/plain/scripts/combo-layer
+export DEST_DIR=${COMBO_DIR}
+
+SRC_SCRIPTS_DIR=${COMBO_DIR}/scripts
+SRC_COMBO_SCRIPT=${SRC_SCRIPTS_DIR}/combo-layer
+SRC_CONF_DIR=${COMBO_DIR}/conf
+SRC_CONF_PATH=${SRC_CONF_DIR}/combo-layer.conf
+
+DEFAULT_BUILD_DIR := ${ROOT_DIR}/build
 BUILD_DIR ?= ${DEFAULT_BUILD_DIR}
 
 DEFAULT_HISTORY_DIR := ${BUILD_DIR}/buildhistory
@@ -105,10 +115,26 @@ check:
 # Initialize the environment
 # -----------------------------------------------------------------------------
 
-${COMPO_DIR} ${COMBO_DIR}:
+${COMPO_DIR}:
 	repo init -u ${MANIFEST_URL} -b ${MANIFEST_BRANCH} -m ${MANIFEST}
 	repo sync -j${NPROC}
 	repo start $(basename ${MANIFEST}) --all || repo checkout $(basename ${MANIFEST})
+	repo sync -j${NPROC}
+
+.PHONY: components
+components: ${COMPO_DIR}
+
+${COMBO_DIR}:
+	[ -d $@ ] || mkdir -p $@
+	[ -d ${SRC_SCRIPTS_DIR} ] || mkdir -p ${SRC_SCRIPTS_DIR}
+	[ -d ${SRC_CONF_DIR} ] || mkdir -p ${SRC_CONF_DIR}
+	[ -f ${SRC_COMBO_SCRIPT} ] \
+		|| ( wget ${COMBO_URL} -O ${SRC_COMBO_SCRIPT} && chmod a+x ${SRC_COMBO_SCRIPT} )
+	[ -f ${SRC_CONF_PATH} ] || cp ${CONF_PATH} ${SRC_CONF_PATH}
+	cd $@ && ${SRC_COMBO_SCRIPT} init -c ${SRC_CONF_PATH}
+
+.PHONY: combination
+combination: ${COMPO_DIR} ${COMBO_DIR}
 
 .PHONY: init
 init: ${COMPO_DIR} ${COMBO_DIR}
