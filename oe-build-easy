@@ -280,10 +280,8 @@ fi
 # Edit the bblayers.conf file of current build
 BBLAYERS_CONF_FILE=$SRC_BUILD_DIR/conf/bblayers.conf
 for BBLAYER_NAME in $BBLAYERS_NAME; do
-    grep -Fq "$BBLAYER_NAME[^/]" $BBLAYERS_CONF_FILE
-    if [ $? -ne 0 ]; then
-        echo "BBLAYERS += \"$BBLAYER_NAME\"" >> $BBLAYERS_CONF_FILE
-    fi
+    grep -Rq "$BBLAYER_NAME[^/]" $BBLAYERS_CONF_FILE \
+        || echo "BBLAYERS += \"$BBLAYER_NAME\"" >> $BBLAYERS_CONF_FILE
 done
 
 if [ $DEBUG -eq 1 ] && [[ ! $OPTIONS =~ .*-DDD.* ]]; then

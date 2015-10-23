@@ -26,6 +26,7 @@ export LOCAL_REPO_DIR=${COMPO_DIR}
 DEFAULT_COMBO_DIR := ${ROOT_DIR}/combination
 COMBO_DIR ?= ${DEFAULT_COMBO_DIR}
 COMBO_URL=http://cgit.openembedded.org/openembedded-core/plain/scripts/combo-layer
+# COMBO_URL=http://git.yoctoproject.org/cgit/cgit.cgi/poky/plain/scripts/combo-layer
 export DEST_DIR=${COMBO_DIR}
 
 SRC_SCRIPTS_DIR=${COMBO_DIR}/scripts
@@ -39,7 +40,8 @@ BUILD_DIR ?= ${DEFAULT_BUILD_DIR}
 DEFAULT_HISTORY_DIR := ${BUILD_DIR}/buildhistory
 HISTORY_DIR ?= ${DEFAULT_HISTORY_DIR}
 
-OE_BUILD_EASY_SCRIPT := ${COMPO_DIR}/meta-exiguous/scripts/oe-build-easy
+OE_BUILD_EASY_SCRIPT ?= ${COMPO_DIR}/meta-exiguous/scripts/oe-build-easy
+
 DEFAULT_CONF_PATH := ${COMPO_DIR}/meta-exiguous/conf/$(basename ${MANIFEST}).conf
 CONF_PATH ?= ${DEFAULT_CONF_PATH}
 
@@ -115,26 +117,26 @@ check:
 # Initialize the environment
 # -----------------------------------------------------------------------------
 
-${COMPO_DIR}:
+.PHONY: components
+components:
 	repo init -u ${MANIFEST_URL} -b ${MANIFEST_BRANCH} -m ${MANIFEST}
 	repo sync -j${NPROC}
 	repo start $(basename ${MANIFEST}) --all || repo checkout $(basename ${MANIFEST})
 	repo sync -j${NPROC}
 
-.PHONY: components
-components: ${COMPO_DIR}
-
-${COMBO_DIR}:
-	[ -d $@ ] || mkdir -p $@
-	[ -d ${SRC_SCRIPTS_DIR} ] || mkdir -p ${SRC_SCRIPTS_DIR}
-	[ -d ${SRC_CONF_DIR} ] || mkdir -p ${SRC_CONF_DIR}
-	[ -f ${SRC_COMBO_SCRIPT} ] \
-		|| ( wget ${COMBO_URL} -O ${SRC_COMBO_SCRIPT} && chmod a+x ${SRC_COMBO_SCRIPT} )
-	[ -f ${SRC_CONF_PATH} ] || cp ${CONF_PATH} ${SRC_CONF_PATH}
-	cd $@ && ${SRC_COMBO_SCRIPT} init -c ${SRC_CONF_PATH}
+${COMPO_DIR}: components
 
 .PHONY: combination
-combination: ${COMPO_DIR} ${COMBO_DIR}
+combination: ${COMPO_DIR}
+	[ -d ${SRC_SCRIPTS_DIR} ] || mkdir -p ${SRC_SCRIPTS_DIR}
+	[ -d ${SRC_CONF_DIR} ] || mkdir -p ${SRC_CONF_DIR}
+	[ -f ${SRC_COMBO_SCRIPT} ] || ( wget ${COMBO_URL} -O ${SRC_COMBO_SCRIPT} && chmod a+x ${SRC_COMBO_SCRIPT} )
+	[ -f ${SRC_CONF_PATH} ] || cp ${CONF_PATH} ${SRC_CONF_PATH}
+	cd ${COMBO_DIR} && ${SRC_COMBO_SCRIPT} init -c ${SRC_CONF_PATH}
+	(cd ${COMBO_DIR} && git add . && git commit -m "Updated on ${DATETIME}" 2>/dev/null) || true
+	cd ${COMBO_DIR} && ${SRC_COMBO_SCRIPT} update -c ${SRC_CONF_PATH}
+
+${COMBO_DIR}: combination
 
 .PHONY: init
 init: ${COMPO_DIR} ${COMBO_DIR}
@@ -144,8 +146,8 @@ init: ${COMPO_DIR} ${COMBO_DIR}
 # Build
 # -----------------------------------------------------------------------------
 
-.PHONY: ${BUILD_DIR}
-${BUILD_DIR}: ${COMPO_DIR} ${COMBO_DIR}
+.PHONY: build
+build: ${COMPO_DIR}
 	${OE_BUILD_EASY_SCRIPT} ${CONF_PATH} \
 		--compodir ${COMPO_DIR} \
 		--combodir ${COMBO_DIR} \
@@ -156,8 +158,7 @@ ${BUILD_DIR}: ${COMPO_DIR} ${COMBO_DIR}
 		--history ${HISTORY_DIR} \
 		--options ${OPTIONS}
 
-.PHONY: build
-build: ${BUILD_DIR}
+${BUILD_DIR}: build
 
 # FIXME [script] Add a target to build all available machines
 
