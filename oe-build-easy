@@ -260,9 +260,11 @@ sed -i "s/^#BB_NUMBER_THREADS.*$/BB_NUMBER_THREADS\ =\ \"$NPROC\"/" \
 sed -i "s/^#PARALLEL_MAKE.*$/PARALLEL_MAKE\ =\ \"-j$NPROC\"/" \
     $LOCAL_CONF_FILE
 
+# Remove extra image configuration defaults
+sed -i "s/^EXTRA_IMAGE_FEATURES = .*$/EXTRA_IMAGE_FEATURES = \"\"/" \
+    $LOCAL_CONF_FILE
+
 # Inform the BUILDHISTORY_DIR field
-
-
 grep -Fq "BUILDHISTORY_DIR ?= \"$HISTORY\"" $LOCAL_CONF_FILE
 if [ $? -ne 0 ]; then
     echo "BUILDHISTORY_DIR ?= \"$HISTORY\"" >> $LOCAL_CONF_FILE
