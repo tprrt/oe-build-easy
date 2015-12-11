@@ -141,7 +141,7 @@ combination: ${COMPO_DIR}
 ${COMBO_DIR}: combination
 
 .PHONY: init
-init: ${COMPO_DIR} ${COMBO_DIR}
+init: ${COMPO_DIR} ${COMBO_DIR} ${BUILD_DIR}
         $(info Initialize environment to build...)
 
 # -----------------------------------------------------------------------------
@@ -221,5 +221,5 @@ oe-selftest: ${BUILD_DIR}
 # -----------------------------------------------------------------------------
 
 .PHONY: all
-all: clean config check init parse-only build
-# all: info check init build test-dependencies oe-selftest update publish
+all: clean config check init build
+# all: clean config check init build test-dependencies oe-selftest update publish
