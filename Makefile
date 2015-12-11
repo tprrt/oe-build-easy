@@ -156,7 +156,7 @@ parse-only: ${COMPO_DIR}
 		--image ${IMAGE} \
 		--machine ${MACHINE} \
 		--distro ${DISTRO} \
-		--build $@ \
+		--build ${BUILD_DIR} \
 		--history ${HISTORY_DIR} \
 		--options "--parse-only"
 
@@ -221,5 +221,5 @@ oe-selftest: ${BUILD_DIR}
 # -----------------------------------------------------------------------------
 
 .PHONY: all
-all: config check init build
+all: clean config check init parse-only build
 # all: info check init build test-dependencies oe-selftest update publish
