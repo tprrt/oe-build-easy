@@ -45,4 +45,4 @@ env:
   - PATH=$HOME/bin:$PATH
 
 script:
-  - make all OPTIONS="--parse-only"
+  - make parse-only

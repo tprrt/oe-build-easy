@@ -8,3 +8,6 @@
 components
 combination
 build
+
+#oe-selftest noise
+oe-selftest.log

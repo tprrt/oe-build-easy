@@ -212,7 +212,7 @@ BBLAYERS_NAME=""
 TMP_LIST=`find $COMBO_DIR -name "layer.conf"`
 for TMP in $TMP_LIST; do
     case $TMP in
-        *meta-skeleton*|*meta-selftest*|*meta-tlk*)
+        *meta-skeleton*|*meta-tlk*)
             continue
             ;;
         *meta-*)

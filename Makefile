@@ -41,6 +41,8 @@ DEFAULT_HISTORY_DIR := ${BUILD_DIR}/buildhistory
 HISTORY_DIR ?= ${DEFAULT_HISTORY_DIR}
 
 OE_BUILD_EASY_SCRIPT ?= ${COMPO_DIR}/meta-exiguous/scripts/oe-build-easy
+OE_SELFTEST_SCRIPT = ${COMBO_DIR}/scripts/oe-selftest
+OE_TEST_DEPENDENCIES_SCRIPT = ${COMBO_DIR}/scripts/test-dependencies.sh
 
 DEFAULT_CONF_PATH := ${COMPO_DIR}/meta-exiguous/conf/$(basename ${MANIFEST}).conf
 CONF_PATH ?= ${DEFAULT_CONF_PATH}
@@ -120,9 +122,9 @@ check:
 .PHONY: components
 components:
 	repo init -u ${MANIFEST_URL} -b ${MANIFEST_BRANCH} -m ${MANIFEST}
-	repo sync -j${NPROC}
+	repo sync --force-sync -j${NPROC}
 	repo start $(basename ${MANIFEST}) --all || repo checkout $(basename ${MANIFEST})
-	repo sync -j${NPROC}
+	repo sync --force-sync -j${NPROC}
 
 ${COMPO_DIR}: components
 
@@ -143,6 +145,24 @@ init: ${COMPO_DIR} ${COMBO_DIR}
         $(info Initialize environment to build...)
 
 # -----------------------------------------------------------------------------
+# Parse recipes, also used to create the build folder
+# -----------------------------------------------------------------------------
+
+.PHONY: parse-only
+parse-only: ${COMPO_DIR}
+	${OE_BUILD_EASY_SCRIPT} ${CONF_PATH} \
+		--compodir ${COMPO_DIR} \
+		--combodir ${COMBO_DIR} \
+		--image ${IMAGE} \
+		--machine ${MACHINE} \
+		--distro ${DISTRO} \
+		--build $@ \
+		--history ${HISTORY_DIR} \
+		--options "--parse-only"
+
+${BUILD_DIR}: parse-only
+
+# -----------------------------------------------------------------------------
 # Build
 # -----------------------------------------------------------------------------
 
@@ -158,15 +178,25 @@ build: ${COMPO_DIR}
 		--history ${HISTORY_DIR} \
 		--options ${OPTIONS}
 
-${BUILD_DIR}: build
+# -----------------------------------------------------------------------------
+# test-dependencies
+# -----------------------------------------------------------------------------
 
-# FIXME [script] Add a target to build all available machines
+.PHONY:test-dependencies
+test-dependencies: ${BUILD_DIR}
+	rm -rf ${BUILD_DIR}/test-dependencies
+	mkdir ${BUILD_DIR}/test-dependencies
+	cd ${BUILD_DIR} && ${OE_TEST_DEPENDENCIES_SCRIPT} \
+		--targets="${IMAGE}" \
+		--tmpdir="${BUILD_DIR}/test-dependencies"
 
 # -----------------------------------------------------------------------------
 # oe-selftest
 # -----------------------------------------------------------------------------
 
-# FIXME [script] Add a target to run oe-selftest
+.PHONY:oe-selftest
+oe-selftest: ${BUILD_DIR}
+	cd ${BUILD_DIR} && ${OE_SELFTEST_SCRIPT} --run-all-tests
 
 # -----------------------------------------------------------------------------
 # Update combination layer
@@ -192,4 +222,4 @@ ${BUILD_DIR}: build
 
 .PHONY: all
 all: config check init build
-# all: info check init build oe-selftest update publish
+# all: info check init build test-dependencies oe-selftest update publish

@@ -32,7 +32,7 @@ dependencies:
 
 test:
   override:
-  - make all OPTIONS="--parse-only"
+  - make parse-only
 
 # FIXME [script] If the build is well finished then update combination layer and publish
 # images built on $CIRCLE_ARTIFACTS.
