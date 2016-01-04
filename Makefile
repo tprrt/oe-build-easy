@@ -5,7 +5,7 @@
 .DEFAULT_GOAL := all
 
 NPROC := $(shell nproc)
-DATETIME ?= $(shell date +%Y-%m-%d:%H:%M:%S)
+DATETIME ?= $(shell date +%Y-%m-%d-%H:%M:%S)
 
 TOOLS_NEEDED := repo git gawk wget diffstat unzip chrpath xterm \
                 python realpath patch
