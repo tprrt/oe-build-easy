@@ -13,10 +13,10 @@ TOOLS_NEEDED := repo git gawk wget diffstat unzip chrpath xterm \
 ROOT_DIR := $(shell pwd)
 
 DEFAULT_MANIFEST_URL := $(shell echo "git@github.com:tprrt/exiguous-manifest.git")
-DEFAULT_MANIFEST_BRANCH := master
-DEFAULT_MANIFEST := master.xml
 MANIFEST_URL ?= ${DEFAULT_MANIFEST_URL}
+DEFAULT_MANIFEST_BRANCH := master
 MANIFEST_BRANCH ?= ${DEFAULT_MANIFEST_BRANCH}
+DEFAULT_MANIFEST := master.xml
 MANIFEST ?= ${DEFAULT_MANIFEST}
 
 DEFAULT_COMPO_DIR := ${ROOT_DIR}/components
@@ -25,14 +25,14 @@ export LOCAL_REPO_DIR=${COMPO_DIR}
 
 DEFAULT_COMBO_DIR := ${ROOT_DIR}/combination
 COMBO_DIR ?= ${DEFAULT_COMBO_DIR}
-COMBO_URL=http://cgit.openembedded.org/openembedded-core/plain/scripts/combo-layer
-# COMBO_URL=http://git.yoctoproject.org/cgit/cgit.cgi/poky/plain/scripts/combo-layer
+COMBO_URL := http://cgit.openembedded.org/openembedded-core/plain/scripts/combo-layer
+# COMBO_URL := http://git.yoctoproject.org/cgit/cgit.cgi/poky/plain/scripts/combo-layer
 export DEST_DIR=${COMBO_DIR}
 
-SRC_SCRIPTS_DIR=${COMBO_DIR}/scripts
-SRC_COMBO_SCRIPT=${SRC_SCRIPTS_DIR}/combo-layer
-SRC_CONF_DIR=${COMBO_DIR}/conf
-SRC_CONF_PATH=${SRC_CONF_DIR}/combo-layer.conf
+SRC_SCRIPTS_DIR := ${COMBO_DIR}/scripts
+SRC_COMBO_SCRIPT := ${SRC_SCRIPTS_DIR}/combo-layer
+SRC_CONF_DIR := ${COMBO_DIR}/conf
+SRC_CONF_PATH := ${SRC_CONF_DIR}/combo-layer.conf
 
 DEFAULT_BUILD_DIR := ${ROOT_DIR}/build
 BUILD_DIR ?= ${DEFAULT_BUILD_DIR}
@@ -41,8 +41,8 @@ DEFAULT_HISTORY_DIR := ${BUILD_DIR}/buildhistory
 HISTORY_DIR ?= ${DEFAULT_HISTORY_DIR}
 
 OE_BUILD_EASY_SCRIPT ?= ${COMPO_DIR}/meta-exiguous/scripts/oe-build-easy
-OE_SELFTEST_SCRIPT = ${COMBO_DIR}/scripts/oe-selftest
-OE_TEST_DEPENDENCIES_SCRIPT = ${COMBO_DIR}/scripts/test-dependencies.sh
+OE_SELFTEST_SCRIPT := ${COMBO_DIR}/scripts/oe-selftest
+OE_TEST_DEPENDENCIES_SCRIPT := ${COMBO_DIR}/scripts/test-dependencies.sh
 
 DEFAULT_CONF_PATH := ${COMPO_DIR}/meta-exiguous/conf/$(basename ${MANIFEST}).conf
 CONF_PATH ?= ${DEFAULT_CONF_PATH}
@@ -55,7 +55,7 @@ endif
 
 DEFAULT_OPTIONS :=
 DEFAULT_DISTRO := exiguous
-DEFAULT_MACHINE := qemux86-64
+DEFAULT_MACHINE := qemu-exiguous
 DEFAULT_IMAGE := exiguous-image
 
 OPTIONS ?= ${DEFAULT_OPTIONS}
